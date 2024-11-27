@@ -25,7 +25,6 @@ SDL_Texture* GameObject::createColoredTexture(SDL_Renderer* renderer, Color* col
     if (!coloredTexture) {
         return NULL;
     }
-
     // Configurar la nueva textura como objetivo de renderizado
     SDL_SetRenderTarget(renderer, coloredTexture);
 

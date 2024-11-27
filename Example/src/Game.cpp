@@ -11,6 +11,7 @@ Game::Game(const char* title){
         isRunning = true;
     }
 }
+
 Game::~Game(){}
 
 bool Game::init(const char* title, int xpos, int ypos, int width, int height){
@@ -29,6 +30,7 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height){
 
     for(uint8_t i=0; i<4; i++) {
         e_gObj[i] = new GameObject(e_paths[i], renderer);
+        if(NULL == e_gObj[i]) return false;
     }
 
     return true;
@@ -90,6 +92,11 @@ void Game::clean(){
 void Game::render(){
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, board, NULL, NULL);
+
+    for(Sprite* s_e : s_elem) {
+        s_e->render(renderer);
+    }
+    
     SDL_RenderPresent(renderer);
 }
 
