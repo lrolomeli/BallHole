@@ -17,6 +17,6 @@ class Sprite{
     private:
         SDL_Rect src, dst;
         SDL_Texture* texture;
-        Color c;
+        Color* c;
 
 };

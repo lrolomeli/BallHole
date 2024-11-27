@@ -10,7 +10,7 @@
 int main(int argc, char* argv[]) {
     Game* game = new Game("HB v1.0");
     //Game game("HB v1.0");
-    game->loadLevel(1);
+    game->loadLevel(0);
 
     while(game->running()) {
         game->handleEvents();

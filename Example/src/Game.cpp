@@ -34,7 +34,6 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height){
     }
 
     return true;
-
 }
 
 void Game::getSpritePosition(uint8_t pos, int& x, int& y) {

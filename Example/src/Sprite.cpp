@@ -12,13 +12,15 @@ Sprite::Sprite(GameObject * gobj, SDL_Renderer* renderer, int xpos, int ypos, ui
     dst.w = boardsize/10;
     dst.h = boardsize/10;
 
-    if(NOCOLOR == color) {
-        texture = gobj->GetTexture();
+    texture = gobj->GetTexture();
+    
+    if(NoColor > color) {
+        c = getColor((Colors) color);
     }
     else {
-        Color* c = getColor((Colors) color);
-        texture = gobj->createColoredTexture(renderer, c);
+        c = nullptr;
     }
+    
 }
 
 Sprite::~Sprite() {}
@@ -38,5 +40,6 @@ void Sprite::updatePositionY(int y) {
 }
 
 void Sprite::render(SDL_Renderer* renderer) {
+    if(nullptr != c) SDL_SetTextureColorMod(texture, c->r, c->g, c->b);
     SDL_RenderCopy(renderer, texture, &src, &dst);
 }

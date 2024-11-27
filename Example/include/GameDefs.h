@@ -14,16 +14,18 @@
 #define RGB_RED     255, 0  , 0  
 #define RGB_GREEN   0  , 255, 0  
 #define RGB_BLUE    0  , 0  , 255
+#define RGB_GRAY    127, 127, 127
 
-#define NOCOLOR (0U)
+#define BLACK   (0U)
 #define WHITE   (1U)
 #define RED     (2U)
 #define GREEN   (3U)
 #define BLUE    (4U)
-#define BLACK   (5U)
+#define GRAY    (5U)
+#define NOCOLOR (6U)
 
 enum Colors {
-    Black = 0, White = 1, Red = 2, Green = 3, Blue = 4
+    Black = 0, White = 1, Red = 2, Green = 3, Blue = 4, Gray = 5, NoColor = 6
 };
 
 struct Color {
