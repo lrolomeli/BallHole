@@ -31,12 +31,22 @@ void Sprite::updatePosition(int x, int y) {
     dst.y = y;
 }
 
-void Sprite::updatePositionX(int x) {
-    dst.x = x;
+void Sprite::moveX(bool di) {
+    if(di) dst.x += speed;
+    else dst.x -= speed;
 }
 
-void Sprite::updatePositionY(int y) {
-    dst.y = y;
+void Sprite::moveY(bool di) {
+    if(di) dst.y += speed;
+    else dst.y -= speed;
+}
+
+int Sprite::getX() {
+    return dst.x;
+}
+
+int Sprite::getY() {
+    return dst.y;
 }
 
 void Sprite::render(SDL_Renderer* renderer) {

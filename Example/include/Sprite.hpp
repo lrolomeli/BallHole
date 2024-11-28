@@ -9,10 +9,12 @@ class Sprite{
     public:
         Sprite(GameObject * gobj, SDL_Renderer* renderer, int xpos, int ypos, uint8_t color);
         ~Sprite();
-        void updatePositionX(int x);
-        void updatePositionY(int y);
+        void moveX(bool di);
+        void moveY(bool di);
         void updatePosition(int x, int y);
         void render(SDL_Renderer* renderer);
+        int getX();
+        int getY();
 
     private:
         SDL_Rect src, dst;

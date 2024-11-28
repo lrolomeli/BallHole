@@ -23,7 +23,10 @@ class Game{
         bool running();
         void loadLevel(uint8_t level);
     private:
-        bool isRunning;
+        bool isRunning, moving, click, ax, di, motion;
+        uint8_t pos_act_gE;
+        Position pos, old_pos;
+        GElement* act_gElem;
         SDL_Window* window;
         SDL_Renderer* renderer;
         SDL_Texture* board;
@@ -32,4 +35,14 @@ class Game{
         std::vector<Sprite*> s_elem;
         void loadSprites(const Level* lv);
         void getSpritePosition(uint8_t pos, int& x, int& y);
+        uint8_t getClickPos(Sint32 x, Sint32 y);
+        void searchBall(uint8_t pos);
+        bool predictMove();
+        uint8_t getCollision(uint8_t pos);
+        void travel(int8_t dist);
+        bool evaluateResult(uint8_t res);
+        void updateGEPosition();
+        void updateMovingSprite();
+        void direction(uint8_t m);
+        void debug();
 };
