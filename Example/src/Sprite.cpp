@@ -20,6 +20,8 @@ Sprite::Sprite(GameObject * gobj, SDL_Renderer* renderer, int xpos, int ypos, ui
     else {
         c = nullptr;
     }
+
+    renderizable = true;
     
 }
 
@@ -49,7 +51,11 @@ int Sprite::getY() {
     return dst.y;
 }
 
+void Sprite::setVisibility(bool renderizable) {
+    this->renderizable = renderizable;
+}
+
 void Sprite::render(SDL_Renderer* renderer) {
     if(nullptr != c) SDL_SetTextureColorMod(texture, c->r, c->g, c->b);
-    SDL_RenderCopy(renderer, texture, &src, &dst);
+    if(renderizable) SDL_RenderCopy(renderer, texture, &src, &dst);
 }

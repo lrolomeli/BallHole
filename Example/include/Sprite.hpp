@@ -15,8 +15,10 @@ class Sprite{
         void render(SDL_Renderer* renderer);
         int getX();
         int getY();
+        void setVisibility(bool renderizable);
 
     private:
+        bool renderizable;
         SDL_Rect src, dst;
         SDL_Texture* texture;
         Color* c;

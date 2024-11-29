@@ -24,7 +24,7 @@ class Game{
         void loadLevel(uint8_t level);
     private:
         bool isRunning, moving, click, ax, di, motion;
-        uint8_t pos_act_gE;
+        uint8_t pos_act_gE, moves, result;
         Position pos, old_pos;
         GElement* act_gElem;
         SDL_Window* window;
@@ -37,12 +37,11 @@ class Game{
         void getSpritePosition(uint8_t pos, int& x, int& y);
         uint8_t getClickPos(Sint32 x, Sint32 y);
         void searchBall(uint8_t pos);
-        bool predictMove();
-        uint8_t getCollision(uint8_t pos);
+        void predictMove();
+        void getCollision(uint8_t pos);
         void travel(int8_t dist);
-        bool evaluateResult(uint8_t res);
+        void evaluateResult();
         void updateGEPosition();
         void updateMovingSprite();
         void direction(uint8_t m);
-        void debug();
 };

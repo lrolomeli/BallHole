@@ -38,6 +38,7 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height){
     pos_act_gE = 255;
     click = false;
     moving = false;
+    result = CONTINUE;
 
     return true;
 }
@@ -86,19 +87,6 @@ void Game::direction(uint8_t m) {
     else di = true;
 }
 
-void Game::debug() {
-    if(ax) std::cout << "Eje X, ";
-    else std::cout << "Eje Y, ";
-    if(di) std::cout << "Incrementando" << std::endl;
-    else std::cout << "Decrementando" << std::endl;
-
-    if(ax && di) std::cout << "RIGHT" <<std::endl;
-    else if(ax && !di) std::cout << "LEFT" <<std::endl;
-    else if(!ax && di) std::cout << "DOWN" <<std::endl;
-    else if(!ax && !di) std::cout << "UP" <<std::endl;
-    else std::cout << "NONE" <<std::endl;
-}
-
 void Game::handleEvents(){
     SDL_Event event;    
     SDL_PollEvent(&event);
@@ -132,14 +120,13 @@ void Game::searchBall(uint8_t pos) {
     if(BALL == e->second.type) act_gElem = &e->second;
 }
 
-uint8_t Game::getCollision(uint8_t pos) {
+void Game::getCollision(uint8_t pos) {
+
     auto e = gameMapElem.find(pos);
-    if(e == gameMapElem.end()) return CONTINUE; // continue moving.
-    if(BALL == e->second.type) return STOP; // stop motion, no deals.
-    else if(HOLE == e->second.type) return SCORE; // stop motion, remove ball, increment score.
-    else if(BLOCK == e->second.type) return STOP; // stop motion, no deals.
-    else if(SPIKE == e->second.type) return GAMEOVER; // stop motion, reset the game. (let animation flow)
-    else return STOP;
+    if(e == gameMapElem.end()) result = CONTINUE; // continue moving.
+    else if(SPIKE == e->second.type) result = GAMEOVER; // stop motion, reset the game. (let animation flow)
+    else if(HOLE == e->second.type && e->second.color == act_gElem->color) result = SCORE; // stop motion, remove ball, increment score.
+    else result = STOP;
 }
 
 void Game::updateGEPosition() {
@@ -149,25 +136,36 @@ void Game::updateGEPosition() {
     temp.id = act_gElem->id;
     temp.color = act_gElem->color;
     temp.type = act_gElem->type;
-    // cual elemento estamos eliminando se supone que el actual
+    // eliminar el objeto en movimiento
     gameMapElem.erase(pos_act_gE);
     new_pos = (pos.y*10) + pos.x;
     gameMapElem[new_pos] = temp;
     pos_act_gE = new_pos;
 }
 
-bool Game::evaluateResult(uint8_t res) {
-    if(GAMEOVER == res) return false;
-    else if(STOP == res) {
+void Game::evaluateResult() {
+    if(STOP == result) {
         updateGEPosition();
-        return true;
     }
-    else return true;
+    else if(SCORE == result) {
+        // cual elemento estamos eliminando se supone que el actual
+        gameMapElem.erase(pos_act_gE);
+        pos_act_gE = 255;
+    }
+    else if(GAMEOVER == result) {
+        gameMapElem.erase(pos_act_gE);
+        pos_act_gE = 255;
+    }
+    else {
+        
+    }
 }
 
 void Game::travel(int8_t dist) {
     int8_t i;
-    uint8_t result;
+
+    // incrementar el numero de movimientos
+    moves++;
 
     if(dist > 0) {
         i = 1;
@@ -180,15 +178,21 @@ void Game::travel(int8_t dist) {
     while(CONTINUE == result) {
         if(ax) pos.x += i;
         else pos.y += i;
-        result = getCollision((pos.y*10) + pos.x);
+        getCollision((pos.y*10) + pos.x);
+        if(result == STOP) { // evita que dos objetos ocupen un mismo sitio
+            if(ax) pos.x += i*(-1);
+            else pos.y += i*(-1);
+        }
         dist--;
         if(0 == dist) result = STOP;
     }
 
-    (void) evaluateResult(result);
+    evaluateResult();
+
+    moving = true;
 }
 
-bool Game::predictMove() {
+void Game::predictMove() {
     int8_t dest, origin, dist;
 
     if(di) dest = 9;
@@ -199,9 +203,6 @@ bool Game::predictMove() {
 
     dist = dest - origin;
     if(dist != 0) travel(dist);
-    else return false;
-
-    return true;
 }
 
 void Game::updateMovingSprite() {
@@ -224,6 +225,23 @@ void Game::updateMovingSprite() {
         else s_elem[act_gElem->id]->moveY(di);
     }
 
+    if (!moving) {
+        // llego a la posicion final el objeto
+        // si fue un score hay que eliminar el objeto
+        if(result == SCORE) {
+            // como hacer que el elemento ya no se renderizable sin eliminarlo
+            s_elem[act_gElem->id]->setVisibility(false);
+            act_gElem = nullptr; // evita que se vuelva a mover
+        } 
+        else if(result == GAMEOVER) {
+            isRunning = false;
+        }
+        else {
+
+        }
+        result = CONTINUE;
+    }
+
 }
 
 void Game::update(){
@@ -233,7 +251,7 @@ void Game::update(){
             click = false;
         }
         if(motion) {
-            moving = predictMove();
+            predictMove();
             motion = false;
         }
     }
