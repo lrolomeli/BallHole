@@ -96,12 +96,15 @@ void Core::searchBall() {
 }
 
 void Core::getCollision(uint8_t pos) {
+    // std::cout << std::to_string(pos) << std::endl;
 
     auto e = gameMapElem.find(pos);
     if(e == gameMapElem.end()) result = CONTINUE; // continue moving.
     else if(SPIKE == e->second.type) result = GAMEOVER; // stop motion, reset the game. (let animation flow)
     else if(HOLE == e->second.type && e->second.color == act_gElem->color) result = SCORE; // stop motion, remove ball, increment score.
     else result = STOP;
+
+    // std::cout << std::to_string(result) << std::endl;
 }
 
 void Core::updateGEPosition() {
@@ -119,11 +122,12 @@ void Core::updateGEPosition() {
 }
 
 void Core::evaluateResult() {
-    if(STOP == result) {
+    if(STOP == result || CONTINUE == result) {
         updateGEPosition();
     }
     else if(SCORE == result) {
         // cual elemento estamos eliminando se supone que el actual
+        std::cout << std::to_string(pos_act_gE) << std::endl;
         gameMapElem.erase(pos_act_gE);
         pos_act_gE = 255;
     }
@@ -132,7 +136,6 @@ void Core::evaluateResult() {
         pos_act_gE = 255;
     }
     else {
-        
     }
 }
 
@@ -148,7 +151,7 @@ void Core::travel(int8_t dist) {
         dist *= -1;
     }
     
-    while(CONTINUE == result) {
+    while(CONTINUE == result && dist > 0) {
         if(ax) pos.x += i;
         else pos.y += i;
         getCollision((pos.y*10) + pos.x);
@@ -157,7 +160,6 @@ void Core::travel(int8_t dist) {
             else pos.y += i*(-1);
         }
         dist--;
-        if(0 == dist) result = STOP;
     }
 
     evaluateResult();
