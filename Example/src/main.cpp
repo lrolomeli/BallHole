@@ -6,9 +6,8 @@
 #include "Game.hpp"
 
 int main(int argc, char* argv[]) {
+
     Game* game = new Game("HB v1.0");
-    //Game game("HB v1.0");
-    game->loadLevel(1);
 
     while(game->running()) {
         game->handleEvents();
